@@ -22,3 +22,10 @@ No.1 – Web browser provider in China
 No.1 – Mobile app store in China
 No.2 – Search Engine in China
 
+# Contact
+
+You are welcome to leaving the comments directly follow the spec page or please contact us with the following email:
+
+- Songfeng Li, AC of Qihoo 360: lisongfeng@360.cn
+
+
