@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Alipay Payment Method</title>
+    <meta charset='utf-8'>
+    <script src='https://www.w3.org/Tools/respec/respec-w3c-common'
+            async class='remove'></script>
+    <script class='remove'>
+      var respecConfig = {
+          shortName:  "360pay-payment-method",
+          //edDraftURI:   "",
+          specStatus: "unofficial",
+          publishDate: "2016-09-18",
+          editors: [
+                {   name:       "Songfeng Li",
+                    url:        "https://github.com/cncuckoo",
+                    company:    "Qihoo 360",
+                    companyURL: "http://www.360.com/"
+                },
+                {   name:       "Liangang Li",
+                    url:        "https://github.com/",
+                    company:    "Qihoo 360",
+                    companyURL: "http://www.360.com/"
+                },
+                {   name:       "Chengyin Li",
+                    url:        "https://github.com/welefen",
+                    company:    "Qihoo 360",
+                    companyURL: "http://www.360.com/"
+                }
+          ],
+          license:      "w3c-software-doc",
+          noRecTrack:   true,
+          //previousMaturity: "FPWD",
+          //previousPublishDate:  "1977-03-15",
+          wg:           "Web Payments Working Group",
+          wgURI:        "https://www.w3.org/Payments/WG/",
+          wgPublicList: "public-payments-wg",
+          wgPatentURI:  "https://www.w3.org/2004/01/pp-impl/83744/status",
+          issueBase:    "https://github.com/w3c/browser-payment-api/issues/",
+          localBiblio:  {
+              "PAYMENTARCH": {
+                  title:    "Payment Request Architecture"
+              ,   href:     "https://w3c.github.io/browser-payment-api/specs/architecture.html"
+              ,   authors:  [
+                      "Adrian Bateman"
+                  ,   "Zach Koch"
+                  ,   "Richard Barnes"
+                  ,   "Roy McElmurry"
+                  ]
+              ,   status:   "ED"
+              },
+              "PAYMENTREQUESTAPI": {
+                  title:    "Payment Request API"
+              ,   href:     "https://www.w3.org/TR/payment-request/"
+              ,   authors:  [
+                      "Adrian Bateman"
+                  ,   "Zach Koch"
+                  ,   "Richard Barnes"
+                  ,   "Roy McElmurry"
+                  ]
+              ,   status:   "WD"
+              },
+              "METHODIDENTIFIERS": {
+                  title:    "Payment Method Identifiers"
+              ,   href:     "https://www.w3.org/TR/payment-method-id/"
+              ,   authors:  [
+                      "Adrian Bateman"
+                  ,   "Zach Koch"
+                  ,   "Richard Barnes"
+                  ,   "Roy McElmurry"
+                  ]
+              ,   status:   "WD"
+              },
+			  "WEBIDL": {
+                  title:    "WebIDL Level 1"
+              ,   href:     "http://www.w3.org/TR/WebIDL-1/"
+              ,   authors:  [
+                      "Cameron McCormack"
+                  ,   "Boris Zbarsky"
+                  ]
+              ,   status:   "Rec"
+              }
+          }
+      };
+    </script>
+    <style>
+    dt { margin-top: 0.75em; }
+    table { margin-top: 0.75em; border-collapse:collapse; border-style:hidden hidden none hidden }
+    table thead { border-bottom:solid }
+    table tbody th:first-child { border-left:solid }
+    table td, table th { border-left:solid; border-right:solid; border-bottom:solid thin; vertical-align:top; padding:0.2em }
+    li { margin-top: 0.5em; margin-bottom: 0.5em;}
+    </style>
+  </head>
+  <body>
+    <section id='abstract'>
+      <p>
+        The 360Pay payment method specification describes the data formats used by the PaymentRequest API [[!PAYMENTREQUESTAPI]] to support payment by 360pay.
+      </p>
+    </section>
+
+    <section id='sotd'>
+    </section>
+    
+    <section class='informative'>
+      <h2>Introduction</h2>
+      <p>
+        This specification is a 360pay <a>Payment Method Specification</a> used by the PaymentRequest API
+        [[!PAYMENTREQUESTAPI]] to support payment by 360pay. It is intended
+        to provide compatibility for merchants who currently request card details from customers to ease adoption
+        of the PaymentRequest API.
+      </p>
+      <p>
+        In the future, merchants should favor payment methods that provide a tokenized response.
+      </p>
+    </section>
+
+    <section id="dependencies"> 
+      <h2>Dependencies</h2> 
+      <p> 
+      This specification relies on several other underlying specifications. 
+      </p> 
+      <dl> 
+        <dt>Payment Request Architecture</dt>
+        <dd>The terms <dfn data-lt="payment method|payment methods">Payment Method</dfn>,
+        <dfn data-lt="payment app|payment apps">Payment App</dfn>, and <dfn>Payment Transaction
+        Message Specification</dfn> are defined by the Payment Request Architecture document
+        [[!PAYMENTARCH]].</dd>
+        <dt>Payment Request API</dt>
+        <dd>The term <dfn>PaymentRequest constructor</dfn> is defined by the PaymentRequest API
+        specification [[!PAYMENTREQUESTAPI]].</dd>
+        <dt>Payment Method Identifiers</dt>
+        <dd>The term <dfn data-lt="payment method identifier|payment method identifiers">Payment
+        Method Identifier</dfn> is defined by the Payment Method Identifiers specification
+        [[!METHODIDENTIFIERS]].</dd>
+        <dt>Web IDL</dt>
+        <dd>The IDL in this specification is defined by Web IDL [[!WEBIDL]].</dd>
+      </dl>
+    </section>
+
+    <section id="method-id">
+      <h2>Payment Method Identifier</h2>
+      <p>The following <a>payment method identifier</a> strings are supported by the Alipay data formats.</p>
+
+      <table>
+        <tr><th>Identifier String</th><th>Description</th></tr>
+        <tr><td>360pay</td><td>360Ppay</td></tr>
+        
+      </table>
+    </section>
+  <!--	
+	<section id="payment-flows">
+      <h2>360pay Payment flows</h2>
+      
+    </section>
+  -->
+    <section id="init-data">
+      <h2>Payment Method Specific Data for the PaymentRequest constructor</h2>
+      <p>This section describes payment method specific data that is supplied as part of the <code>methodData</code>
+      argument to the PaymentRequest constructor.</p>
+      <p>The following is the payment method specific data used by the PaymentRequest constructor when processing
+      360Pay Payment methods.</p>
+	  
+	  <section>
+      <h2>Payment Method Specific Data </h2>
+      <pre class="idl">
+        dictionary PaymentMethodSpecificData  {
+            required DOMString       mer_code;
+            required DOMString       mer_trade_code;
+            required DOMString       trans_service;
+            required DOMString       input_cha;
+            required DOMString       sign_type;
+            required DOMString       sign;
+            required DOMString       notify_url;
+            required DOMString       return_url;
+            required DOMString       rec_amount; 
+            required DOMString       product_name;   
+                     DOMString       product_price;    
+                     DOMString       pay_type;  
+                     DOMString       qr_pay_mode;
+                     DOMString       md_time;
+                     DOMString       mer_order_time;         
+                     DOMString       timeout_set;      
+                     DOMString       bank_code;          
+        };
+      </pre>
+	  
+	  <p>
+        The <code>PaymentMethodSpecificData</code> dictionary contains the following fields:
+      </p>
+	  
+<dl>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-mercode"><code>mer_code</code></dfn></dt>
+
+<dd>The <code>mer_code</code> field contains the merchant's ID assigned by 360Pay.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-mertradecode"><code>mer_trade_code</code></dfn></dt>
+
+<dd>The <code>mer_trade_code</code> field contains the merchant's order number.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-transservice"><code>trans_service</code></dfn></dt>
+
+<dd>The <code>trans_service</code> field contains the service type selected by the merchant while sending the request.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-inputcha"><code>input_cha</code></dfn></dt>
+
+<dd>The <code>input_cha</code> field contains the character encoding type of the merchant's website.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-signtype"><code>sign_type</code></dfn></dt>
+
+<dd>The <code>sign_type</code> field contains the signature type.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-sign"><code>sign</code></dfn></dt>
+
+<dd>The <code>sign</code> field contains the signature content.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-notifyurl"><code>notify_url</code></dfn></dt>
+
+<dd>The <code>notify_url</code> field contains the URL that will used by the asynchronous notification.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-returnurl"><code>return_url</code></dfn></dt>
+
+<dd>The <code>return_url</code> field contains the URL that will used by synchronous notification.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-recamount"><code>rec_amount</code></dfn></dt>
+
+<dd>The <code>rec_amount</code> field contains the total amount of the order.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-productname"><code>product_name</code></dfn></dt>
+
+<dd>The <code>product_name</code> field contains the product's name.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-productprice"><code>product_price</code></dfn></dt>
+
+<dd>The <code>product_price</code> field contains the product's price.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-paytype"><code>pay_type</code></dfn></dt>
+
+<dd>The <code>pay_type</code> field contains the payment type.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-qrpaymode"><code>qr_pay_mode</code></dfn></dt>
+
+<dd>The <code>qr_pay_mode</code> field contains number 1 or 0, mean seperately to generate the qrcode and not to genertate the qrcode.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-mdtime"><code>md_time</code></dfn></dt>
+
+<dd>The <code>md_time</code> field contains the anti-fishing attack timestamp.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-merordertime"><code>mer_order_time</code></dfn></dt>
+
+<dd>The <code>mer_order_time</code> field contains the merchant's order time.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-timeoutset"><code>timeout_set</code></dfn></dt>
+
+<dd>The <code>timeout_set</code> field contains the timeout value in milliseconds for the asynchronous notification.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-bankcode"><code>bank_code</code></dfn></dt>
+
+<dd>The <code>bank_code</code> field contains the bank code.</dd>
+
+</dl>
+
+	  
+	  </section>
+	  
+    </section>
+
+    <section id="response">
+      <h2>Payment Method Response</h2>
+      <p>The <dfn><code>PaymentMethodResponse</code></dfn> dictionary contains the response from the
+      PaymentRequest API when a user accepts payment with a 360Pay.</p>
+
+      <section>
+      <h2>AlipayPaymentResponse</h2>
+      <pre class="idl">
+        dictionary PaymentMethodResponse {
+          required DOMString       gateway_trade_code;
+          required DOMString       inner_trade_code;
+          required DOMString       sign; 
+                   DOMString       bank_code;
+                   DOMString       pay_time;
+                   DOMString       bank_pay_flag;
+                   DOMString       bank_trade_code;
+                   DOMString       mer_code;     
+                   DOMString       mer_trade_code;       
+                   DOMString       input_cha;        
+                   DOMString       sign_type;        
+                   DOMString       product_name;         
+                   DOMString       rec_amount;       
+                   DOMString       pay_amount;
+                   DOMString       md_time;      
+                   DOMString       product_price;
+        };
+      </pre>
+
+      <p>
+        The <code>PaymentMethodResponse</code> dictionary contains the following fields:
+      </p>
+
+<dl>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-gatewaytradecode"><code>gateway_trade_code</code></dfn></dt>
+
+<dd>The <code>gateway_trade_code</code> field contains the gateway trade code.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-innertradecode"><code>inner_trade_code</code></dfn></dt>
+
+<dd>The <code>inner_trade_code</code> field contains the inner trade code.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-sign"><code>sign</code></dfn></dt>
+
+<dd>The <code>sign</code> field contains the signature content.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-bankcode"><code>bank_code</code></dfn></dt>
+
+<dd>The <code>bank_code</code> field contains the bank code.</dd>
+
+
+<dt><dfn data-dfn-type="dfn" id="dfn-paytime"><code>pay_time</code></dfn></dt>
+
+<dd>The <code>pay_time</code> field contains the payment time, if not empty, the format is 'YYYYMMDDHHMMSS'.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-bankpayflag"><code>bank_pay_flag</code></dfn></dt>
+
+<dd>The <code>bank_pay_flag</code> field contains the payment result, 'success' mean the payment has completed successfully, 'fail' mean the payment has failed, and '' mean the payment process has unexpectedly interrupted.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-banktradecode"><code>bank_trade_code</code></dfn></dt>
+
+<dd>The <code>bank_trade_code</code> field contains the bank trade code</dd>
+
+
+<dt><dfn data-dfn-type="dfn" id="dfn-mercode"><code>mer_code</code></dfn></dt>
+
+<dd>The <code>mer_code</code> field contains the merchant's ID assigned by 360Pay.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-mertradecode"><code>mer_trade_code</code></dfn></dt>
+
+<dd>The <code>mer_trade_code</code> field contains the merchant's order number.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-inputcha"><code>input_cha</code></dfn></dt>
+
+<dd>The <code>input_cha</code> field contains the character encoding type of the merchant's website.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-signtype"><code>sign_type</code></dfn></dt>
+
+<dd>The <code>sign_type</code> field contains the signature type.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-productname"><code>product_name</code></dfn></dt>
+
+<dd>The <code>product_name</code> field contains the product name.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-recamount"><code>rec_amount</code></dfn></dt>
+
+<dd>The <code>rec_amount</code> field contains the total amount of the order.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-payamount"><code>pay_amount</code></dfn></dt>
+
+<dd>The <code>pay_amount</code> field contains the actual amount of the payment.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-mdtime"><code>md_time</code></dfn></dt>
+
+<dd>The <code>md_time</code> field contains the anti-fishing attack timestamp.</dd>
+
+<dt><dfn data-dfn-type="dfn" id="dfn-productprice"><code>product_price</code></dfn></dt>
+
+<dd>The <code>product_price</code> field contains the product price.</dd>
+
+
+</dl>
+
+
+      </section>
+    </section>
+  </body>
+</html>
